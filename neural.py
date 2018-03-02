@@ -1,10 +1,10 @@
 import tensorflow as tf
 from data_creator import create_data
 
-n_nodes_hl1 = 1000
-n_nodes_hl2 = 1000
-n_nodes_hl3 = 1000
-n_nodes_hl4 = 1000
+n_nodes_hl1 = 200
+n_nodes_hl2 = 200
+n_nodes_hl3 = 200
+n_nodes_hl4 = 200
 
 n_bits = 20
 
@@ -25,7 +25,7 @@ def neural_network_model(data):
 
     hidden_4_layer = {'weights':tf.Variable(tf.random_normal([n_nodes_hl3, n_nodes_hl4], dtype='float64')),
                       'biases':tf.Variable(tf.random_normal([n_nodes_hl4], dtype='float64'))}
-                      
+
     output_layer = {'weights':tf.Variable(tf.random_normal([n_nodes_hl4, n_bits], dtype='float64')),
                     'biases':tf.Variable(tf.random_normal([n_bits], dtype='float64')),}
 
@@ -53,7 +53,7 @@ def train_neural_network(place_x):
     #cost = tf.reduce_mean( tf.nn.softmax_cross_entropy_with_logits(prediction,y) )
     # NEW:
     cost = tf.reduce_mean( tf.nn.softmax_cross_entropy_with_logits(logits=prediction, labels=place_y) )
-    optimizer = tf.train.AdamOptimizer(0.001).minimize(cost)
+    optimizer = tf.train.AdamOptimizer().minimize(cost)
     
     hm_epochs = 30
     with tf.Session() as sess:
@@ -65,7 +65,7 @@ def train_neural_network(place_x):
         for epoch in range(hm_epochs):
             epoch_loss = 0
             feed_dict_temp = dict()
-            generated_data = create_data(5000, n_bits)
+            generated_data = create_data(5000, n_bits, 'Max remains')
             _, c = sess.run([optimizer, cost], feed_dict={place_x: generated_data['X'], place_y: generated_data['y']})
             epoch_loss += c
 
@@ -74,7 +74,7 @@ def train_neural_network(place_x):
         correct = tf.equal(tf.argmax(prediction, 1), tf.argmax(place_y, 1))
 
         accuracy = tf.reduce_mean(tf.cast(correct, 'float'))
-        generated_data_test = create_data(3000, n_bits)
+        generated_data_test = create_data(3000, n_bits, 'Max remains')
         print('Accuracy:',accuracy.eval({place_x:generated_data_test['X'], place_y:generated_data_test['y']}))
 
 train_neural_network(place_x)
