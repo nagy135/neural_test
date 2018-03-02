@@ -1,11 +1,9 @@
 import numpy as np
 
 def create_data( num_records, num_bits ):
-    data = np.zeros((num_records, num_bits))
-    choices = np.random.choice(num_bits, num_records)
-
-    data[np.arange(num_records), choices] = 1
-    return data
-
+	data = dict()
+	data['X'] = np.random.randint(2, size=(num_records, num_bits))
+	data['y'] = np.array([list("{0:b}".format(int(''.join([str(x) for x in row]), 2) + 1).zfill(num_bits))[-num_bits:] for row in data['X']], dtype='int64')
+	return data
 if __name__ == '__main__':
-    create_data(15,5)
+    print(create_data(15,5))
